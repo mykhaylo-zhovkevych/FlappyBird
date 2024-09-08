@@ -8,7 +8,7 @@ import javax.swing.*;
 
 
 // The JPanel as the canvas for the JFrame, where the components will be rendered 
-public class FlappyBird extends JPanel{
+public class FlappyBird extends JPanel implements ActionListener, KeyListener{
 
 	int boardWidth = 360;
 	int boardHeight = 640;
@@ -38,23 +38,37 @@ public class FlappyBird extends JPanel{
 		}
 	}
 	
-	// game logic
+	// Game logic
 	Bird bird;
+	int velocityY = 0;
+	// Every frame the bird will slow down by one pixel 
+	int gravity = 1; 
+			
+	Timer gameLoop;
+	
 	
 	
 	FlappyBird() {
 		setPreferredSize(new Dimension(boardWidth, boardHeight));
 		// setBackground(Color.blue);
 		
+		setFocusable(true);
+		// Will go and check the three functions from KeyListener
+		addKeyListener(this);
 
-		// load images
+		// Load images
 		backgroundImg = new ImageIcon(getClass().getResource("/background.png")).getImage();
 		birdImg = new ImageIcon(getClass().getResource("/flappybird.png")).getImage();
         topPipeImg = new ImageIcon(getClass().getResource("/toppipe.png")).getImage();
         bottomPipeImg = new ImageIcon(getClass().getResource("/bottompipe.png")).getImage();
         
-        // bird
+        // Bird
         bird = new Bird(birdImg);
+        
+        // Game timer
+        // This actionPerformed method is invoked automatically each time the timer fires (approximately 60 times per second)
+        gameLoop = new Timer(1000/60, this);
+        gameLoop.start();
 		
 	}
 	
@@ -65,11 +79,45 @@ public class FlappyBird extends JPanel{
 		
 	}
 	public void draw(Graphics g) {
-		// background top left corner is 0,0 and the right bottom corner is 360, 640
+		// Background top left corner is 0,0 and the right bottom corner is 360, 640
 		g.drawImage(backgroundImg, 0, 0, this.boardWidth, this.boardHeight, null);
 		
-		// the bird class allows quicker access to the bird properties
+		// The bird class allows quicker access to the bird properties
 		g.drawImage(bird.img, bird.x, bird.y, bird.width, bird.height, null);
 	}
 	
+	public void move() {
+		velocityY += gravity;
+		bird.y += velocityY;
+		bird.y = Math.max(bird.y, 0);
+	}
+	// Here the ActionListener will be triggered when an action occurs, such as a timer event in this case 
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		move();
+		repaint();
+		
+	}
+
+
+	// Any type of the key will be processed 
+	@Override
+	public void keyPressed(KeyEvent e) {
+		
+		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+			velocityY = -9;
+		}
+	}
+
+	// Only character type keys will be processed 
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e) {
+		
+	}
 }

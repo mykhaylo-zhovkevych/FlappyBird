@@ -24,6 +24,7 @@ public class App {
 		frame.add(flappyBird);
 		// pack is for correct dimension is added 
 		frame.pack();
+		flappyBird.requestFocus();
 		frame.setVisible(true);
 		
 		
